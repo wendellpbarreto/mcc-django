@@ -1,0 +1,32 @@
+# -*- coding: utf-8 -*-
+from geraldo import Report, ReportBand, ObjectValue, ReportBand, Label
+
+from reportlab.lib.units import cm
+from reportlab.lib.pagesizes import A4
+
+class RelatorioPeca(Report):
+    print_if_empty = True
+
+    title = 'Relatório da Peça'
+    author = 'Museu Virtual'
+    subject = 'Relatório da Peça'
+    keywords = 'Relatório, Peça'
+    additional_fonts = {}
+
+    page_size = A4
+
+    class band_detail(ReportBand):
+		height = 9*cm
+
+		name = 'Teste'
+		height = 10.5*cm
+		width = 19*cm
+		visible = True
+		borders = {'top': None, 'right': None, 'bottom': False, 'left': None, 'all': True}
+		margin_top = 50
+		margin_bottom = 50 
+
+		elements=(
+				Label(text='MINISTÉRIO DA EDUCAÇÃO E DA CULTURA', left=0, top=0.5*cm, width=10*cm, height=0.5*cm),		
+				ObjectValue(attribute_name='id', left=0.5*cm),
+				)

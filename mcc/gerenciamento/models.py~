@@ -1,0 +1,344 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+from django.db import models
+from django.contrib.auth.models import User, Group
+import os
+
+from djmoney.models.fields import MoneyField
+
+class FuncaoAutor(models.Model):
+	nome = models.CharField(max_length=45, help_text="Nome da função do autor.", unique=True)
+	
+	def __unicode__(self):
+		return self.nome
+		
+	class Meta:
+		verbose_name = "Função do Autor"
+		verbose_name_plural = "Funções do Autor"
+		
+		
+class Autor(models.Model):
+	nome = models.CharField(max_length=200, help_text="Nome do autor.")
+	funcao_autor = models.ForeignKey(FuncaoAutor, help_text="Função do autor.")
+	
+	def __unicode__(self):
+		return self.nome
+		
+	class Meta:
+		verbose_name = "Autor"
+		verbose_name_plural = "Autores"
+		
+class Origem(models.Model):
+	nome = models.CharField(max_length=100, unique=True)
+	
+	def __unicode__(self):
+		return self.nome
+		
+	class Meta:
+		verbose_name = "Origem"
+		verbose_name_plural = "Origem"
+		
+class Procedencia(models.Model):
+	nome = models.CharField(max_length=100, help_text="Nome da procedência.", unique=True)
+	
+	def __unicode__(self):
+		return self.nome
+		
+	class Meta:
+		verbose_name = "Procedência"
+		verbose_name_plural = "Procedências"
+
+
+class Proprietario(models.Model):
+	nome = models.CharField(max_length=100, help_text="Nome do atual proprietário.", unique=True)
+	
+	def __unicode__(self):
+		return self.nome
+		
+	class Meta:
+		verbose_name = "Proprietário"
+		verbose_name_plural = "Proprietários"
+		
+class ExProprietario(models.Model):
+	nome = models.CharField(max_length=100, help_text="Nome do ex-proprietário.", unique=True)
+	
+	def __unicode__(self):
+		return self.nome
+		
+	class Meta:
+		verbose_name = "Ex-Proprietário"
+		verbose_name_plural = "Ex-Proprietários"
+		
+class Secao(models.Model):
+	nome = models.CharField(max_length=100, help_text="Nome da seção.", unique=True)
+	
+	def __unicode__(self):
+		return self.nome
+		
+	class Meta:
+		verbose_name = "Seção"
+		verbose_name_plural = "Seções"
+	
+class Colecao(models.Model):
+	nome = models.CharField(max_length=100, help_text="Nome da coleção.", unique=True)
+	
+	def __unicode__(self):
+		return self.nome
+		
+	class Meta:
+		verbose_name = "Coleção"
+		verbose_name_plural = "Coleções"
+		
+class SubColecao(models.Model):
+	nome = models.CharField(max_length=100, help_text="Nome da sub-coleção.", unique=True)
+	colecao = models.ForeignKey(Colecao)
+	
+	def __unicode__(self):
+		return self.nome
+		
+	class Meta:
+		verbose_name = "Sub-Coleção"
+		verbose_name_plural = "Sub-Coleções"
+		
+class MaterialTecnica(models.Model):
+	nome = models.CharField(max_length=100,  help_text="Material ou técnica em que a peça foi construída.", unique=True)
+	
+	def __unicode__(self):
+		return self.nome
+		
+	class Meta:
+		verbose_name = "Material/Técnica"
+		verbose_name_plural = "Materiais/Técnicas"
+
+
+class FormaAquisicao(models.Model):
+	nome = models.CharField(max_length=45,  help_text="Nome da sub-coleção.", unique=True)
+	
+	def __unicode__(self):
+		return self.nome
+		
+	class Meta:
+		verbose_name = "Forma de Aquisição"
+		verbose_name_plural = "Formas de Aquisição"
+		
+class Fornecedor(models.Model):
+	nome = models.CharField(max_length=45, help_text="Nome do fornecedor.", unique=True)
+	
+	def __unicode__(self):
+		return self.nome
+		
+	class Meta:
+		verbose_name = "Fornecedor"
+		verbose_name_plural = "Fornecedores"
+		
+class Cargo(models.Model):
+	nome = models.CharField(max_length=45, help_text="Nome do cargo.", unique=True)
+	
+	def __unicode__(self):
+		return self.nome
+		
+	class Meta:
+		verbose_name = "Cargo"
+		verbose_name_plural = "Cargos"
+
+class Equipe(models.Model):
+	nome = models.CharField(max_length=45, help_text="Nome da equipe.", unique=True)
+	
+	def __unicode__(self):
+		return self.nome
+		
+	class Meta:
+		verbose_name = "Equipe"
+		verbose_name_plural = "Equipes"
+		
+class FuncaoFuncionario(Group):
+		
+	class Meta:
+		verbose_name = "Função do Funcionário"
+		verbose_name_plural = "Funções do Funcionário"
+		
+class Funcionario(User):
+	
+	class Meta:
+		verbose_name = "Funcionário"
+		verbose_name_plural = "Funcionários"
+		
+class InformacoesFuncionais(models.Model):
+	usuario = models.OneToOneField(Funcionario, help_text="Funcionário.", primary_key=True)
+	cpf = models.CharField(verbose_name="CPF", help_text="Número do CPF (somente números).", max_length=11)
+	rg = models.CharField(verbose_name="RG", help_text="Número do RG ((somente números).", max_length=11)
+	data_de_nascimento = models.DateField(verbose_name="Data de Nascimento", help_text="Data de nascimento do funcionário, seguindo o formato dd/mm/aaaa.")
+	cargo = models.ForeignKey(Cargo, help_text="Cargo que o funcionário pode estar ocupando no momento.", null=True)
+	equipe = models.ForeignKey(Equipe, help_text="Equipe a qual o funcionário pertence no momento.", null=True)
+	funcao_funcionario = models.ForeignKey(FuncaoFuncionario, verbose_name="Função do Funcionário.", help_text="Função que o funcionário exerce no museu.")
+
+
+class Video(models.Model):
+    
+
+    def video_dinamico(instance, filename):
+	    return os.path.join(u'videos/pecas', instance.numero_registro, filename)
+    
+    video = models.FileField(upload_to=video_dinamico, max_length=200, help_text="Vídeo da peça.", blank=True, null=True)
+
+    def __unicode__(self):
+		return self.peca
+		
+    class Meta:
+        verbose_name = "Vídeo"
+        verbose_name_plural = "Vídeos"
+
+		
+class Peca(models.Model):
+	numero_registro = models.CharField(max_length=20, help_text="Número de Registro.", unique=True)
+	proprietario = models.ForeignKey(Proprietario, help_text="Proprietário da peça.", blank=True, null=True)
+	objeto = models.CharField(max_length=45, help_text="Breve descrição do objeto.", blank=True, null=True)
+	titulo = models.CharField(max_length=45, help_text="Título da peça.", blank=True, null=True)
+	
+	def foto_dinamica(instance, filename):
+		return os.path.join(u'imagens/pecas', instance.numero_registro, filename)
+		
+    def audio_dinamico(instance, filename):
+        return os.path.join(u'audios/pecas', instance.numero_registro, filename)
+		
+		
+    foto = models.ImageField(upload_to=foto_dinamica, max_length=200, help_text="Imagem da peça.", blank=True, null=True)
+	audio = models.FileField(upload_to=audio_dinamico, max_length=200, help_text="Audio da peça.", blank=True, null=True)
+    videos = models.ManyToManyField(Video)
+	
+    data_criacao = models.DateField(help_text="Data de criação da peça, seguindo o formato dd/mm/aaaa.", blank=True, null=True)
+	autor = models.ForeignKey(Autor, help_text="Autor da peça.", blank=True, null=True)
+	origem = models.ForeignKey(Origem, help_text="Origem da peça.", blank=True, null=True)
+	procedencia = models.ForeignKey(Procedencia, help_text="Procedência da peça.", blank=True, null=True)
+	secao = models.ForeignKey(Secao, help_text="Seção onde peça está.", blank=True, null=True)
+	colecao =  models.ForeignKey(Colecao, help_text="Coleção de que a peça faz parte.", blank=True, null=True)
+	sub_colecao =  models.ForeignKey(SubColecao, help_text="Subcoleção de que a peça faz parte.", blank=True, null=True)
+	material_tecnica = models.ForeignKey(MaterialTecnica, help_text="Material ou técnica em que a peça foi construída.", blank=True, null=True)
+	numero_partes = models.IntegerField(help_text="Quantidade de partes da peça.", blank=True, null=True)
+	descricao = models.TextField(max_length=500, help_text="Descrição detalhada da peça.", blank=True, null=True)
+	iconografia = models.TextField(max_length=500, help_text="Iconografia da peça.", blank=True, null=True)
+	peso = models.FloatField(help_text="Peso da peça.", blank=True, null=True)
+	altura = models.FloatField(help_text="Altura da peça.", blank=True, null=True)
+	largura= models.FloatField(help_text="Largura da peça.", blank=True, null=True)
+	profundidade = models.FloatField(help_text="Profundidade da peça.", blank=True, null=True)
+	comprimento = models.FloatField(help_text="Comprimento da peça.", blank=True, null=True)
+	circunferencia = models.FloatField(help_text="Circunferência da peça.", blank=True, null=True)
+	diametro = models.FloatField(help_text="Diâmetro da peça.", blank=True, null=True)
+	numero_processo = models.CharField(max_length=20,  help_text="Número do processo.", blank=True, null=True)
+	observacoes = models.TextField(max_length=200, help_text="Observações sobre a peça.", blank=True, null=True)
+	data_aquisicao = models.DateField(help_text="Data de aquisição da peça, seguindo o formato dd/mm/aaaa.", blank=True, null=True)
+	forma_aquisicao = models.ForeignKey(FormaAquisicao, help_text="Forma de aquisição.", blank=True, null=True)
+	fornecedor = models.ForeignKey(Fornecedor, help_text="Fornecedor da peça.", blank=True, null=True)
+	
+	valor_aquisicao =  MoneyField(max_digits=10, decimal_places=2, default_currency='BRL', help_text="Valor de aquisição da peça, utilizando ponto em vez de vírgula (por ex.: 549.99).", blank=True, null=True)
+	valor_seguro =  MoneyField(max_digits=10, decimal_places=2, default_currency='BRL', help_text="Valor do seguro da peça, utilizando ponto em vez de vírgula (por ex.: 100.00).", blank=True, null=True)
+	
+	ex_proprietario = models.ForeignKey(ExProprietario, help_text="Ex proprietário da peça.", blank=True, null=True)
+	dados_historicos = models.TextField(max_length=500, help_text="Dados históricos da peça.", blank=True, null=True)
+	refencias = models.TextField(max_length=500, help_text="Referências.", blank=True, null=True)
+	funcionario = models.ForeignKey(User, help_text="Funcionário responsável pelo cadastro da peça.", blank=True, null=True)
+	data_cadastro = models.DateField(help_text="Data do cadastro da peça, seguindo o formato dd/mm/aaaa.", blank=True, null=True)
+	
+	def __unicode__(self):
+		return self.titulo
+		
+	class Meta:
+		verbose_name = "Peça"
+		verbose_name_plural = "Peças"
+		
+		
+class EstadoConservacao(models.Model):
+	nome = models.CharField(max_length=45, help_text="Nome do estado de conservação.", unique=True)
+	
+	def __unicode__(self):
+		return self.nome
+		
+	class Meta:
+		verbose_name = "Estado de Conservação"
+		verbose_name_plural = "Estados de Conservação"
+		
+class HistoricoConservacao(models.Model):
+	peca = models.ForeignKey(Peca, help_text="Peça.")
+	data_avaliacao = models.DateField(help_text="Data da avaliação, seguindo o formato dd/mm/aaaa.")
+	estado_conservacao = models.ForeignKey(EstadoConservacao, help_text="Estado de conservação.")
+	descricao = models.TextField(max_length=200, help_text="Descrição da conservação da peça.")
+	funcionario = models.ForeignKey(User, help_text="Funcionário responsável pela avaliação.")
+	
+	def __unicode__(self): 
+		return self.peca
+		
+	class Meta:
+		unique_together = ('peca','data_avaliacao')
+		verbose_name = "Histórico de Conservação"
+		verbose_name_plural = "Históricos de Conservação"
+
+class Intervencao(models.Model):
+	peca = models.ForeignKey(Peca, help_text="Peça.")
+	data_intervencao = models.DateField(help_text="Data de intervenção, seguindo o formato dd/mm/aaaa.")
+	descricao = models.TextField(max_length=200, help_text="Descrição da intervenção.")
+	funcionario = models.ForeignKey(User, help_text="Funcionário que realizou a intervenção.")
+	
+	def __unicode__(self):
+		return self.peca
+		
+	class Meta:
+		unique_together = ('peca','data_intervencao')
+		verbose_name = "Intervenção"
+		verbose_name_plural = "Intervenções"
+		
+class Local(models.Model):
+	nome = models.CharField(max_length=45, help_text="Nome do local onde as peças podem estar.",unique=True)
+	
+	def __unicode__(self):
+		return self.nome
+		
+	class Meta:
+		verbose_name = "Local"
+		verbose_name_plural = "Locais"
+		
+class HistoricoLocalizacao(models.Model):
+	peca = models.ForeignKey(Peca, help_text="Peça")
+	data_alteracao_localizacao = models.DateField(help_text="Data em que foi alterada a localização da peça, seguindo o formato dd/mm/aaaa.")
+	descricao = models.TextField(max_length=200, help_text="Descrição acerca da alteração da peça.")
+	local = models.ForeignKey(Local, help_text="Localização atual da peça.")
+	
+	def __unicode__(self):
+		return self.peca
+		
+	class Meta:
+		unique_together = ('peca','data_alteracao_localizacao')
+		verbose_name = "Intervenção"
+		verbose_name_plural = "Históricos de Localização"
+		
+class TipoInscricao(models.Model):
+	nome = models.CharField(max_length=45, help_text="Nome do tipo de inscrição", unique=True)
+	
+	def __unicode__(self):
+		return self.nome
+		
+	class Meta:
+		verbose_name = "Tipo de Inscrição"
+		verbose_name_plural = "Tipos de Inscrição"
+
+class Inscricao(models.Model):
+	peca = models.ForeignKey(Peca, help_text="Peça.")
+	tipo_inscricao = models.ForeignKey(TipoInscricao, help_text="Tipo de inscrição.")
+	funcionario = models.ForeignKey(User, help_text="Funcionário que realizou a inscrição.")
+	
+	def foto_dinamica(instance, filename):
+		return os.path.join(u'imagens/pecas', instance.peca.numero_registro, u'inscricoes', filename)
+	
+	#foto = models.ImageField(upload_to=foto_dinamica, max_length=200, help_text="Imagem da inscrição, marca ou legenda.", null=True, blank=True)
+	
+	foto = models.ImageField(upload_to=foto_dinamica, max_length=200, help_text="Imagem da inscrição, marca ou legenda.", null=True)
+
+	localizacao_fixa = models.ForeignKey(Local, help_text="Localização fixa da peça.", related_name='+')
+	localizacao_atual = models.ForeignKey(Local, help_text="Localização atual da peça..", related_name='+')
+	
+	def __unicode__(self):
+		return self.peca.numero_registro
+		
+	class Meta:
+		verbose_name = "Inscrição"
+		verbose_name_plural = "Inscrições"
