@@ -169,57 +169,56 @@ def inicio(request):
 
 
 
-# from criacao.forms import *
-# from criacao.models import *
-# from dajax.core import Dajax
-# from django.contrib.auth.models import User
-# from django.core.paginator import Paginator, InvalidPage, EmptyPage
-# from django.db.models.query import EmptyQuerySet
-# from django.http import HttpResponseRedirect, HttpResponse
-# from django.shortcuts import render
-# from django.shortcuts import render_to_response
-# from django.template import RequestContext
-# from django.template.loader import render_to_string
-# from gerenciamento.models import Peca, Autor, Funcionario, Imagem, Video, Audio
-# from django.core.exceptions import ObjectDoesNotExist
+from criacao.forms import *
+from criacao.models import *
+from django.contrib.auth.models import User
+from django.core.paginator import Paginator, InvalidPage, EmptyPage
+from django.db.models.query import EmptyQuerySet
+from django.http import HttpResponseRedirect, HttpResponse
+from django.shortcuts import render
+from django.shortcuts import render_to_response
+from django.template import RequestContext
+from django.template.loader import render_to_string
+from gerenciamento.models import Peca, Autor, Funcionario, Imagem, Video, Audio
+from django.core.exceptions import ObjectDoesNotExist
 
-# from django.contrib.auth.decorators import login_required
-# from django.contrib.auth import authenticate, login, logout
-
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login, logout
 
 
 
 
 
 
-# # Visualização de notícias e CRUD
-# @login_required
-# def noticias(request):
-# 	app_nome = request.resolver_match.app_name
-# 	pagina_nome = request.resolver_match.url_name
 
-# 	museu, museu_nome = UTIL_informacoes_museu()
+# Visualização de notícias e CRUD
+@login_required
+def noticias(request):
+	app_nome = request.resolver_match.app_name
+	pagina_nome = request.resolver_match.url_name
 
-# 	noticias = UTIL_buscar_noticias()
+	museu, museu_nome = UTIL_informacoes_museu()
 
-# 	return render_to_response(app_nome + '/pagina.html', locals(),context_instance=RequestContext(request))
+	noticias = UTIL_buscar_noticias()
 
-# @login_required
-# def ver_noticia(request, id_noticia):
-# 	app_nome = request.resolver_match.app_name
-# 	pagina_nome = request.resolver_match.url_name
+	return render_to_response(app_nome + '/pagina.html', locals(),context_instance=RequestContext(request))
 
-# 	museu, museu_nome = UTIL_informacoes_museu()
+@login_required
+def ver_noticia(request, id_noticia):
+	app_nome = request.resolver_match.app_name
+	pagina_nome = request.resolver_match.url_name
 
-# 	noticia = Noticia.objects.get(id=id_noticia)
-# 	pecas = noticia.pecas.all()
+	museu, museu_nome = UTIL_informacoes_museu()
 
-# 	for peca in pecas:
-# 		peca.imagem = Imagem.objects.filter(peca=peca)[0].imagem
+	noticia = Noticia.objects.get(id=id_noticia)
+	pecas = noticia.pecas.all()
 
-# 	noticia.lista_pecas = pecas
+	for peca in pecas:
+		peca.imagem = Imagem.objects.filter(peca=peca)[0].imagem
 
-# 	return render_to_response(app_nome + '/pagina.html', locals(), context_instance=RequestContext(request))
+	noticia.lista_pecas = pecas
+
+	return render_to_response(app_nome + '/pagina.html', locals(), context_instance=RequestContext(request))
 
 
 # #						  #
@@ -228,87 +227,87 @@ def inicio(request):
 
 
 
-# def UTIL_informacoes_museu():
-# 	try:
-# 		museu = InformacoesMuseu.objects.get(id=1)
-# 	except ObjectDoesNotExist:
-# 		museu = None
+def UTIL_informacoes_museu():
+	try:
+		museu = InformacoesMuseu.objects.get(id=1)
+	except ObjectDoesNotExist:
+		museu = None
 
-# 	if museu:
-# 		museu_nome = museu.nome
-# 	else:
-# 		museu_nome = 'Virtual'
+	if museu:
+		museu_nome = museu.nome
+	else:
+		museu_nome = 'Virtual'
 
-# 	return (museu, museu_nome)
+	return (museu, museu_nome)
 
-# def UTIL_autenticar(request):
-# 	usuario = None
-# 	senha = None
+def UTIL_autenticar(request):
+	usuario = None
+	senha = None
 
-# 	if request.method == 'POST':
-# 		if 'usuario' in request.POST and request.POST['usuario']:
-# 			usuario = request.POST['usuario']
-# 		if 'senha' in request.POST and request.POST['senha']:
-# 			senha = request.POST['senha']
+	if request.method == 'POST':
+		if 'usuario' in request.POST and request.POST['usuario']:
+			usuario = request.POST['usuario']
+		if 'senha' in request.POST and request.POST['senha']:
+			senha = request.POST['senha']
 
-# 		if usuario != None and senha != None:
-# 			usuario_autenticado = authenticate(username=usuario, password=senha)
-# 			if usuario_autenticado is not None:
-# 				if usuario_autenticado.is_active:
-# 					login(request, usuario_autenticado)
-# 					return inicio(request)
-# 				else:
-# 					return entrar_excecao(request, 001)
-# 			else:
-# 				return entrar_excecao(request, 002)
-# 		else:
-# 			return entrar_excecao(request, 003)
-# 	else:
-# 		return entrar_excecao(request, 405)
+		if usuario != None and senha != None:
+			usuario_autenticado = authenticate(username=usuario, password=senha)
+			if usuario_autenticado is not None:
+				if usuario_autenticado.is_active:
+					login(request, usuario_autenticado)
+					return inicio(request)
+				else:
+					return entrar_excecao(request, 001)
+			else:
+				return entrar_excecao(request, 002)
+		else:
+			return entrar_excecao(request, 003)
+	else:
+		return entrar_excecao(request, 405)
 
-# def UTIL_buscar_coletaneas():
-# 	try:
-# 		coletanea_principal = Coletanea.objects.filter(nivel = 0)[0]
-# 	except:
-# 		coletanea_principal = None
+def UTIL_buscar_coletaneas():
+	try:
+		coletanea_principal = Coletanea.objects.filter(nivel = 0)[0]
+	except:
+		coletanea_principal = None
 
-# 	if not coletanea_principal:
-# 		print "Não existe"
-# 		u = User.objects.get(username__exact='admin')
+	if not coletanea_principal:
+		print "Não existe"
+		u = User.objects.get(username__exact='admin')
 
-# 		coletanea_principal = Coletanea(nome='Principal', descricao='Esta é a coletânea principal.', nivel=0, funcionario=u)
-# 		coletanea_principal.save()
+		coletanea_principal = Coletanea(nome='Principal', descricao='Esta é a coletânea principal.', nivel=0, funcionario=u)
+		coletanea_principal.save()
 
-# 	coletaneas = Coletanea.objects.filter(nivel = 1)
+	coletaneas = Coletanea.objects.filter(nivel = 1)
 
-# 	for coletanea in coletaneas:
-# 		try:
-# 			coletanea.peca = coletanea.pecas.all()[0]
-# 		except:
-# 			pass
-# 	# TODO
-# 	# A função a cima de criação de coletânea inicial/principal precisa ser alterada e esta função
-# 	# deve ir para a parte de banco de dados
+	for coletanea in coletaneas:
+		try:
+			coletanea.peca = coletanea.pecas.all()[0]
+		except:
+			pass
+	# TODO
+	# A função a cima de criação de coletânea inicial/principal precisa ser alterada e esta função
+	# deve ir para a parte de banco de dados
 
-# 	return coletanea_principal, coletaneas
+	return coletanea_principal, coletaneas
 
-# def UTIL_buscar_noticias():
+def UTIL_buscar_noticias():
 
-# 	try:
-# 		noticias = Noticia.objects.all()
-# 	except ObjectDoesNotExist:
-# 		noticias = None
+	try:
+		noticias = Noticia.objects.all()
+	except ObjectDoesNotExist:
+		noticias = None
 
 
-# def UTIL_pecas():
-# 	pecas = Peca.objects.all()
+def UTIL_pecas():
+	pecas = Peca.objects.all()
 
-# 	for peca in pecas:
-# 		peca.imagem = Imagem.objects.filter(peca=peca)[0].imagem
+	for peca in pecas:
+		peca.imagem = Imagem.objects.filter(peca=peca)[0].imagem
 
-# 	return pecas
+	return pecas
 
-# def UTIL_pecas_por_coletanea(coletanea_id):
-# 	coletanea = Coletanea.objects.get(id=coletanea_id)
+def UTIL_pecas_por_coletanea(coletanea_id):
+	coletanea = Coletanea.objects.get(id=coletanea_id)
 
-# 	return coletanea.pecas.all
+	return coletanea.pecas.all
