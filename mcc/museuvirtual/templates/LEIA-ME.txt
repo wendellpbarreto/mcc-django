@@ -1,1 +1,0 @@
-Deixar diretório em branco. Manter aqui apenas os arquivos 'bases' dos templates.
